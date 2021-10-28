@@ -1,6 +1,6 @@
 ---
 title: "practical_exercise_5, Methods 3, 2021, autumn semester"
-author: '[Emma Rose Hahn, study group 8]'
+author: '[study group 8]'
 date: "[]"
 output: pdf_document
 ---
