@@ -369,7 +369,7 @@ summary(m9)
 # better
 piecewiseSEM::rsquared(m9)
 ```
-We can see that PAS actually explains more of the variance (19%) than task (0.2%) and is a statistically significant predictor of performance. This would indicate that task does not need to be included in the model.
+When we add PAS as a main effect on top of task, we can see that PAS actually explains more of the variance (19%) than task (0.2%) and is a statistically significant predictor of performance. This would indicate that task does not need to be included in the model.
 ```{r ex3p3iii}
 m10 <- glmer(correct ~ pas +
     (1 | subject),
