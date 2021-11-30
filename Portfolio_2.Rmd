@@ -272,9 +272,9 @@ m6 <- lmer(rt.obj ~ task + pas:task + (1 | subject) + (1 | task),
 summary(m6)
 print(VarCorr(m6), comp = "Variance")
 ```
-In the example above, we get the variance for task as 0, which would result in a singular fit - this indicates that this model is overfitted to the data.
+In the example above, model m6, it results in a singular fit. Singular fits occur when the variances of some of the linear combinations of the effects are either zero or close to zero, and it is indicating that the model may be overfitting for the data. In model m6, we get the variance for task as 0, which results in a singular fit - this indicates to us that this model is overfitted to the data.
 
-We expect that the reason that the model results in a singular fit is simply because it is too complex. <3 
+We expect that the reason that the model results in a singular fit is because we have too many parameters, and is therefore too too complex. As mentioned above, adding any additional random effects besides subject resulted in getting singular fits, so in order for the example above, m6, to not result in a singular fit, we would have to remove (1|Task). 
 
 ## Exercise 3
 
