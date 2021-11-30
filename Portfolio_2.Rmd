@@ -1,7 +1,7 @@
 
 ---
 title: "practical_exercise_3, Methods 3, 2021, autumn semester"
-author: 'Luke Ring'
+author: 'Study Group 8'
 date: "2021-10-02"
 output:
   html_document:
@@ -285,7 +285,7 @@ We expect that the reason that the model results in a singular fit is because we
     iii. if you get a convergence error, try another algorithm (the default is the _Nelder_Mead_) - try (_bobyqa_) for which the `dfoptim` package is needed. In `glmer`, you can add the following for the `control` argument: `glmerControl(optimizer="bobyqa")` (if you are interested, also have a look at the function `allFit`)
     iv. when you have a converging fit - fit a model with only the main effects of _pas_ and _task_. Compare this with the model that also includes the interaction  
     v. indicate which of the two models, you would choose and why  
-    vi. based on your chosen model - write a short report on what this says about the distribution of ratings as dependent on _pas_ and _task_  
+    vi. based on your chosen model - write a short report on what this says about the distribution of ratings as dependent on _pas_ and _task_ 
     vii. include a plot that shows the estimated amount of ratings for four subjects of your choosing 
 3) Finally, fit a multilevel model that models _correct_ as dependent on _task_ with a unique intercept for each _subject_  
     i. does _task_ explain performance?  
@@ -326,7 +326,23 @@ summary(m7)
 ```
 For this model (m7) we used the poisson family because the poisson distribution is specifically used to describe probabilities of event frequencies.
 
-The model indicates that for the PAS effect, participants were less frequently rating their stimuli with higher scores.
+The model indicates that for the PAS effect, participants were less frequently rating their stimuli with higher scores, ???!!!which is why a slope for pas isn't really being modelled.!!!???
+
+```{r ex3p2iv}
+m7.1 <- glmer(count ~
+    pas + task + (1 + pas | subject),
+    data = data.count,
+    family = poisson,
+    control = glmerControl(optimizer = "bobyqa"))
+summary(m7.1)
+```
+(v)
+
+Between m7 and m7.1, we believe that the m7 is the best model, as model m7.1 is simply terrible on all fronts, it tells us nothing, nothing is significant, it is just a greek tragedy
+
+   
+(vi)  
+m7 tells us that there is an important interaction between pas and task when it comes to the distribution of ratings. 
 
 ```{r ex3p2vii}
 # get only specified subjects
