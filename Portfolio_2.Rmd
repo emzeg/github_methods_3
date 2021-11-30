@@ -336,9 +336,9 @@ m7.1 <- glmer(count ~
     control = glmerControl(optimizer = "bobyqa"))
 summary(m7.1)
 ```
-(v)
+(v) FIX TEXT 
 
-Between m7 and m7.1, we believe that the m7 is the best model, as model m7.1 is simply terrible on all fronts, it tells us nothing, nothing is significant, it is just a greek tragedy
+Between m7 and m7.1, we believe that the m7 is the best model, as model m7.1 is a poor model. In m7.1, neither pas nor task explains count score to any significance, whereas in m7 both tasks and the interaction between pas and tasks significantly explains count score.
 
    
 (vi)  
