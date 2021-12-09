@@ -1,15 +1,9 @@
 
 ---
-title: "practical_exercise_3, Methods 3, 2021, autumn semester"
-author: 'Study Group 8'
+title: "Assignment 2 part 1, Methods 3, 2021, autumn semester"
+author: "Study Group 8, Luke Ring (LR), Emma Rose Hahn (EH), Viara Krasteva (VK), Kristian Nøhr Villebro (KV)"
 date: "2021-10-02"
-output:
-  html_document:
-    theme: darkly
-    highlight: breezedark
-    css: knit_style_luke.css
-    code_folding: show
-    toc: true
+output: html_document
 ---
 
 <style type="text/css">
@@ -45,9 +39,9 @@ The data is associated with Experiment 2 of the article at the following DOI htt
     iv. on top of those plots, add the estimated functions (on the _target.contrast_ range from 0-1) for each subject based on partial pooling model (use `glmer` from the package `lme4`) where unique intercepts and slopes for _target.contrast_ are modelled for each _subject_  
     v. in your own words, describe how the partial pooling model allows for a better fit for each subject  
 
-### Answers
+## Answers
 
-#### **Exercise 1, part 1** - EH
+### **Exercise 1, part 1 - EH**
 
 ```{r ex1p1i}
 # get list of all CSV files
@@ -83,7 +77,7 @@ nrow(samples)
 
 
 
-#### **Exercise 1, part 2** - KV
+#### **Exercise 1, part 2 - KV**
 
 ```{r ex1p2i}
 # Add column to indicate if participant response was correct
@@ -111,7 +105,7 @@ Variable | Description | Class
 `subject`|subject number|factor: categorical
 `correct`|Whether answer was correct(1) or incorret (0)|logical, boolean either true or false
 
-```{r ex1p1iii}
+```{r ex1p2iii}
 # only use staircase trial types.
 samples_staircase <- samples %>% filter(trial.type == "staircase")
 #making a no-pooling model
@@ -134,10 +128,11 @@ samples_staircase %>%
     ylab("Correct (probability)") +
     xlab("target contrast")
 ```
+Ex1.p2.iii Comment on the fits - do we have enough data to plot the logistic functions?  
 
 The fits are not great. We can see that the lower contrast seems to result in more incorrect answers but even so, subjects still get correct answer at low contrast. As this is a logical outcome variable, the probabilities for most subjects start around 75%. If the contrast is 0.00, we would expect that the subject would not be able to correctly identify the target stimulus, and should start at 50% (chance level). It does seem as though there is sufficient data, the minimum number of samples for a subject is 70, although there are not the same number of samples for each contrast value.
 
-```{r ex1p1iv}
+```{r ex1p2iv}
 m2 <- glmer(correct ~ target.contrast + (1 + target.contrast | subject),
     data = samples_staircase,
     family = binomial(link = "logit"))
@@ -155,6 +150,8 @@ samples_staircase %>%
     ylab("Correct (probability)") +
     xlab("target contrast")
 ```
+
+Ex1.p2. v. in your own words, describe how the partial pooling model allows for a better fit for each subject 
 
 It allows for per-subject differences in their response to the target contrast. If some subjects have more difficulty seeing differences in low contrast images, we would expect their accuracy to decrease more than other subjects as the contrast values becomes lower. We would conceptually expect no-pooling models to create a better fit for each subject(?), as the subjective models are modelled solely on a given subject. However we would of course always choose the partial pooling models as these would give us great subject-fits but also a model generalizabel for the population. 
 
@@ -175,9 +172,9 @@ Now we __only__ look at the _experiment_ trials (_trial.type_)
     ii. create a model by adding random intercepts (without modelling slopes) that results in a singular fit - then use `print(VarCorr(<your.model>), comp='Variance')` to inspect the variance vector - explain why the fit is singular (Hint: read the first paragraph under details in the help for `isSingular`)
     iii. in your own words - how could you explain why your model would result in a singular fit?  
     
-### Answers
+## Answers
 
-#### **Exercise 2, part 1** - VK
+### **Exercise 2, part 1 - VK**
 
 We will use subjects 002, 009, 014 and 015.
 
@@ -215,6 +212,8 @@ qqline(samples_experiment[samples_experiment$subject == "015", ]$m3_resid,
     col = "red")
 ```
 
+Ex2.p1.i 
+
 These data show a significant tail with some reaction times going far beyond the mean (e.g. 15 seconds +).
 
 
@@ -243,9 +242,11 @@ qqline(log(samples_experiment[samples_experiment$subject == "015", ]$m3l_resid),
 # reset plot grid
 par(mfrow = c(1, 1))
 ```
+Ex2.p1.ii 
+
 Log-transforming the data definitely creates a better fit, as can be seen in the qq-plots. 
 
-#### **Exercise 2, part 2** - VK
+### **Exercise 2, part 2 - VK**
 
 ```{r ex2p2}
 m4 <- lmer(rt.obj ~ task + (1 | subject),
@@ -257,13 +258,15 @@ The above model uses random intercepts for subject. We considered that task and 
 
 Overall this model does not explain much of the variance (0.33% about 0.16% fixed effects and 0.17% random effects). The model shows no statistically significant difference between response times per task.
 
-#### **Exercise 2, part 3** - LR
+### **Exercise 2, part 3 - LR**
 ```{r ex2p3}
 # model with PAS-task interaction.
 m5 <- lmer(rt.obj ~ task + pas:task + (1 | subject),
     REML = FALSE, data = samples_experiment)
 summary(m5)
 ```
+Ex2.p3.i 
+
 Any additional random effects we added besides subject resulted in singular fits.
 ```{r ex2p3ii}
 # here already it becomes a singular fit
@@ -272,6 +275,8 @@ m6 <- lmer(rt.obj ~ task + pas:task + (1 | subject) + (1 | task),
 summary(m6)
 print(VarCorr(m6), comp = "Variance")
 ```
+Ex2.p3.iii. in your own words - how could you explain why your model would result in a singular fit?  
+
 In the example above, model m6, it results in a singular fit. Singular fits occur when the variances of some of the linear combinations of the effects are either zero or close to zero, and it is indicating that the model may be overfitting for the data. In model m6, we get the variance for task as 0, which results in a singular fit - this indicates to us that this model is overfitted to the data.
 
 We expect that the reason that the model results in a singular fit is because we have too many parameters, and is therefore too too complex. As mentioned above, adding any additional random effects besides subject resulted in getting singular fits, so in order for the example above, m6, to not result in a singular fit, we would have to remove (1|Task). 
@@ -294,10 +299,10 @@ We expect that the reason that the model results in a singular fit is because we
     iv. finally, fit a model that models the interaction between _task_ and _pas_  and their main effects  
     v. describe in your words which model is the best in explaining the variance in accuracy  
 
-### Answers
+## Answers
 
 
-#### **Exercise 3, part 1** KV
+### **Exercise 3, part 1 - KV**
 
 ```{r ex3p1}
 data.count <- samples %>% select(subject, pas, task, correct) %>%
@@ -312,7 +317,7 @@ data.count <- samples %>% select(subject, pas, task, correct) %>%
 head(data.count)
 ```
 
-#### **Exercise 3, part 2** EH
+### **Exercise 3, part 2** EH
 
 ```{r ex3p2}
 # multi-level with slope and interaction
@@ -321,15 +326,15 @@ m7 <- glmer(count ~
     (1 + pas | subject),
     data = data.count,
     family = poisson,
-    control = glmerControl(optimizer = "bobyqa"))
+    control = glmerControl(optimizer = "bobyqa")) #added control, ex3.p2.iii
 summary(m7)
 
 ```
-2.i 
+Ex3.p2.i 
 
 For this model (m7) we used the poisson family because the poisson distribution is specifically used to describe probabilities of event frequencies.
 
-2.ii
+Ex3.p2.ii
 
 There is not really a slope being modelled for PAS as PAS is not continuous, it is a factor, so we only get esimates for each PAS level. As a factor, PAS is treated categorically (PAS1, PAS2, PAS3, PAS4), there is no such thing as PAS 1.3 etc and as such, it can not really be modelled as a slope.  
 
@@ -345,12 +350,12 @@ AIC(m7, m7.1)
 ```
 
 
-(v) Indicate which of the two models, you would choose and why 
+Ex3.p2.v  Indicate which of the two models, you would choose and why? 
 
 Between m7 and m7.1, we believe that the m7 is the best model. Out of the two, m7 is the only one thats predictors have any significance on the outcome, in particular, the interactions in m7 have significant effect on the count variable. When comparing the AIC output, it is also shown that model m7 has a better fit, with an AIC of 3148.441, compared to m7.1 of 3398.549. Taking all this into consideration, we are inclined to use this model m7 out of the two as it is the better model.
 
    
-(vi)  based on your chosen model - write a short report on what this says about the distribution of ratings as dependent on _pas_ and _task_ 
+Ex3.p2.vi  based on your chosen model - write a short report on what this says about the distribution of ratings as dependent on _pas_ and _task_ ?
 
 m7 tells us that there is an important interaction between pas and task when it comes to the distribution of ratings, as all interactions reach significance, p < 0.05, except for pas3:taskquadruplet, p = 0.92020 and pas2:taskquadruplet, p = 0.06010
 
@@ -370,15 +375,20 @@ data.count_subset <- data.count %>%
         subject == "015")
 # predict using model for only selected subjects
 m7_fitted <- predict(m7, newdata = data.count_subset)
+data.count_subset$count_estimate <- expm1(m7_fitted)
+
+print(m7_fitted)
 # plot
-data.count_subset %>% ggplot(aes(pas, count, color = task)) +
+data.count_subset %>% ggplot(aes(pas, count, color = task)) + #smaller dots to see the original ratings
     geom_point() +
-    geom_point(aes(x = pas, y = m7_fitted), shape = 18, size = 3) +
+  theme_bw() +
+    geom_point(aes(x = pas, y = count_estimate, color = task,), shape = 18, size = 3) + #larger dots are to see the estimated ratings over top
     facet_wrap(data.count_subset$subject)
+
 
 ```
 
-#### **Exercise 3, part 3** LR
+### **Exercise 3, part 3 - LR**
 
 
 ```{r ex3p3}
@@ -391,6 +401,8 @@ summary(m8)
 piecewiseSEM::rsquared(m8)
 ```
 
+Ex3.p3.i 
+
 Differences in the task seem to explain performance (number of correct answers) to a statistically significant level.
 
 ```{r ex3p3ii}
@@ -402,6 +414,8 @@ summary(m9)
 # better
 piecewiseSEM::rsquared(m9)
 ```
+Ex3.p3.ii 
+
 When we add PAS as a main effect on top of task, we can see that PAS actually has a significant effect on performance, whereas now task no longer displays a significant effect. This means that by including PAS as a main effect in the model, it altered the significance of task on performance.
 ```{r ex3p3iii}
 m10 <- glmer(correct ~ pas +
@@ -428,6 +442,7 @@ summary(m12)
 piecewiseSEM::rsquared(m12)
 AIC(m8, m9, m10, m12)
 ```
+Ex3.p3.v Describe in your words which model is the best in explaining the variance in accuracy?
 
 Of the above models, m12 is the best at explaining the variance in accuracy. But we think that model 10 is a bettter model to use because the difference in explained variance is negligible and it is a simpler model which means it is less prone to overfitting. Adding the random intercepts per subject allows for differences in subjects ability to correctly classify the stimuli. These difference in subjects may come from situational stress. Model m10 also has the lowest AIC score (17421.39), even though it has slightly more residual deviance than model 12, but this makes sense as more complex models are punished in this area.
 
