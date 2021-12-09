@@ -297,7 +297,7 @@ We expect that the reason that the model results in a singular fit is because we
 ### Answers
 
 
-#### **Exercise 3, part 1** VK
+#### **Exercise 3, part 1** KV
 
 ```{r ex3p1}
 data.count <- samples %>% select(subject, pas, task, correct) %>%
